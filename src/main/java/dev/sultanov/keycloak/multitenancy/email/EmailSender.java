@@ -1,8 +1,5 @@
 package dev.sultanov.keycloak.multitenancy.email;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.experimental.UtilityClass;
 import org.keycloak.email.EmailException;
 import org.keycloak.email.EmailTemplateProvider;
@@ -11,14 +8,22 @@ import org.keycloak.models.UserModel;
 import org.keycloak.services.ServicesLogger;
 import org.keycloak.services.Urls;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @UtilityClass
 public class EmailSender {
 
-    public static void sendInvitationEmail(KeycloakSession session, UserModel invitee, String tenantName) {
-        var accountPageUri = Urls.accountBase(session.getContext().getUri().getBaseUri()).build(session.getContext().getRealm().getName());
+    public static void sendInvitationEmail(KeycloakSession session, UserModel invitee, String tenantName, String emailInvitationUri) {
+        var uri = Urls.accountBase(session.getContext().getUri().getBaseUri()).build(session.getContext().getRealm().getName());
+        if (emailInvitationUri != null) {
+            uri = URI.create(emailInvitationUri);
+        }
         var bodyAttributes = new HashMap<String, Object>();
         bodyAttributes.put("tenantName", tenantName);
-        bodyAttributes.put("accountPageUri", accountPageUri);
+        bodyAttributes.put("accountPageUri", uri);
         sendEmail(session, invitee, "invitationEmailSubject", List.of(tenantName), "invitation-email.ftl", bodyAttributes);
     }
 
@@ -37,7 +42,7 @@ public class EmailSender {
     }
 
     private static void sendEmail(KeycloakSession session, UserModel recipient, String subject, List<Object> subjectAttributes, String template,
-            Map<String, Object> bodyAttributes) {
+                                  Map<String, Object> bodyAttributes) {
         try {
             session.getProvider(EmailTemplateProvider.class)
                     .setRealm(session.getContext().getRealm())

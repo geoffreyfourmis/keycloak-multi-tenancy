@@ -378,6 +378,8 @@ components:
           readOnly: true
         email:
           type: string
+        emailInvitationUri:
+          type: string
         locale:
           type: string
         roles:

@@ -80,7 +80,7 @@ public class TenantInvitationsResource extends AbstractAdminResource<TenantAdmin
             session.setAttribute(USER_REQUEST_LOCALE, request.getLocale());
             var invitee = Optional.ofNullable(session.users().getUserByEmail(realm, email))
                     .orElse(new EmailRecipient(email));
-            EmailSender.sendInvitationEmail(session, invitee, tenant.getName());
+            EmailSender.sendInvitationEmail(session, invitee, tenant.getName(), request.getEmailInvitationUri());
 
             adminEvent.operation(OperationType.CREATE)
                     .resourcePath(session.getContext().getUri(), representation.getId())

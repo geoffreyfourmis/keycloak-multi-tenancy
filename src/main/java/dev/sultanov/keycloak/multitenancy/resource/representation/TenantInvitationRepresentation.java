@@ -19,6 +19,9 @@ public class TenantInvitationRepresentation {
     private String email;
 
     @Schema
+    private String emailInvitationUri;
+
+    @Schema
     private String locale;
 
     @Schema(required = true)
